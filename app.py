@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, login_required, logout_user
 
@@ -20,7 +20,7 @@ class Student(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(120), unique=True, nullable=False)
-    Status = db.Column(db.Integer, nullable=False)
+    status = db.Column(db.Integer, nullable=False)
 
     def __repr__(self):
         return '<User %r>' % self.username
@@ -29,7 +29,7 @@ class Student(db.Model):
 class Manager(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
-    password = db.Column(db.String(120), unique=True, nullable=False)
+    password = db.Column(db.String(120), nullable=False)
 
     def __repr__(self):
         return '<Manager %r>' % self.username
@@ -56,7 +56,21 @@ def view_offers():
     return jsonify(res)
 
 
-@app.route('/login')
+@app.route('/register', methods=['POST'])
+def register():
+    message = 'register success'
+    username = request.form['username']
+    password = request.form['password']
+    if username and password:
+        student = Student(username=username, password=password, status=0)
+        db.session.add(student)
+        db.session.commit()
+    else:
+        message = 'register failed'
+    return message
+
+
+@app.route('/login', methods=['POST'])
 def login():
     pass
 
@@ -76,7 +90,9 @@ def publish_offer():
 
 @app.route('/manager/students')
 def check_students_status():
-    pass
+    students = Student.query.all()
+    res = [{'id': student.id, 'username': student.username, 'status': student.status} for student in students]
+    return jsonify(res)
 
 
 @app.route('/manager/students.xls')
