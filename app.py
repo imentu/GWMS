@@ -1,6 +1,6 @@
-from flask import Flask
+from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager
+from flask_login import LoginManager, login_required, logout_user
 
 '''
     毕业生工作管理系统 GWMS (Graduate Work Management System)
@@ -8,17 +8,39 @@ from flask_login import LoginManager
 '''
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test.db'
+
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data/test.db'
 db = SQLAlchemy(app)
+
+login_manager = LoginManager()
+login_manager.init_app(app)
 
 
 class Student(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(120), unique=True, nullable=False)
+    Status = db.Column(db.Integer, nullable=False)
 
     def __repr__(self):
         return '<User %r>' % self.username
+
+
+class Manager(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    password = db.Column(db.String(120), unique=True, nullable=False)
+
+    def __repr__(self):
+        return '<Manager %r>' % self.username
+
+
+class Offer(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    info = db.Column(db.String(80), unique=True, nullable=False)
+
+    def __repr__(self):
+        return '<Offer %r>' % self.id
 
 
 @app.route('/')
@@ -27,9 +49,11 @@ def hello_world():
 
 
 # public api
-@app.route('/offer')
-def view_offer():
-    pass
+@app.route('/offers')
+def view_offers():
+    offers = Offer.query.all()
+    res = [{'id': offer.id, 'info': offer.info} for offer in offers]
+    return jsonify(res)
 
 
 @app.route('/login')
@@ -38,8 +62,10 @@ def login():
 
 
 @app.route('/logout')
+@login_required
 def logout():
-    pass
+    logout_user()
+    return 'logout'
 
 
 # manager api
@@ -60,7 +86,7 @@ def export_students_status():
 
 # student api
 @app.route('/student/status', methods=['POST'])
-def update_status():
+def update_student_status():
     pass
 
 
