@@ -1,28 +1,31 @@
 from app import db
+from flask_login import UserMixin
+from sqlalchemy import text
+from sqlalchemy.sql import func
 
 
-class Student(db.Model):
+class User(db.Model, UserMixin):
+    __tablename__ = 'Users'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(120), nullable=False)
-    status = db.Column(db.Integer, nullable=False)
+    type = db.Column(db.Integer, nullable=False, server_default=text('0'))
+    status = db.Column(db.Integer, nullable=False, server_default=text('0'))
+    create_time = db.Column(db.DateTime, nullable=False, server_default=func.now())
+
+    posts = db.relationship('Post', backref='author', lazy=True)
 
     def __repr__(self):
         return '<User %r>' % self.username
 
 
-class Manager(db.Model):
+class Post(db.Model):
+    __tablename__ = 'Posts'
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=True, nullable=False)
-    password = db.Column(db.String(120), nullable=False)
+    content = db.Column(db.Text, server_default='')
+    author_id = db.Column(db.Integer, db.ForeignKey('Users.id'), nullable=False)
+    create_time = db.Column(db.DateTime, nullable=False, server_default=func.now())
+    update_time = db.Column(db.DateTime, nullable=False, server_default=func.now(), server_onupdate=func.now())
 
     def __repr__(self):
-        return '<Manager %r>' % self.username
-
-
-class Offer(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    info = db.Column(db.String(80), nullable=False)
-
-    def __repr__(self):
-        return '<Offer %r>' % self.id
+        return '<Post %r>' % self.id
