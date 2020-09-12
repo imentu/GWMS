@@ -1,4 +1,4 @@
-from app import db
+from app import db, login_manager
 from flask_login import UserMixin
 from sqlalchemy import text
 from sqlalchemy.sql import func
@@ -20,6 +20,11 @@ class User(db.Model, UserMixin):
 
     def check_password(self, password):
         return self.password == password
+
+
+@login_manager.user_loader
+def load_user(id):
+    return User.query.get(int(id))
 
 
 class Post(db.Model):
