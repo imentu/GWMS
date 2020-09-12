@@ -18,6 +18,9 @@ class User(db.Model, UserMixin):
     def __repr__(self):
         return '<User %r>' % self.username
 
+    def check_password(self, password):
+        return self.password == password
+
 
 class Post(db.Model):
     __tablename__ = 'Posts'

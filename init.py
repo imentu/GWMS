@@ -1,5 +1,5 @@
 import os
-import  time
+import time
 from common import basedir
 from app import create_app, db
 from app.models import User, Post
@@ -34,15 +34,6 @@ def add_test_data():
         post = Post(content='test', author_id=manager.id)
         db.session.add(post)
         db.session.commit()
-
-        print(student2.create_time, post.create_time, post.update_time)
-
-        time.sleep(3)
-
-        Post.query.first().content = 'update test'
-        db.session.commit()
-
-        print(Post.query.first().create_time, Post.query.first().update_time)
 
     print('add test data succeed.')
 
