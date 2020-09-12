@@ -9,9 +9,15 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(120), nullable=False)
+    name = db.Column(db.String(80), server_default='')
+    major = db.Column(db.String(200), server_default='')
+    college = db.Column(db.String(200), server_default='')
+    gender = db.Column(db.Integer, nullable=False, server_default=text('0'))
     type = db.Column(db.Integer, nullable=False, server_default=text('0'))
     status = db.Column(db.Integer, nullable=False, server_default=text('0'))
+    employment = db.Column(db.String(200), server_default='')
     create_time = db.Column(db.DateTime, nullable=False, server_default=func.now())
+    update_time = db.Column(db.DateTime, nullable=False, server_default=func.now(), server_onupdate=func.now())
 
     posts = db.relationship('Post', backref='author', lazy=True)
 
