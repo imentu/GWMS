@@ -21,6 +21,7 @@ username={{username}}&password={{password}}
 > {%
 client.test("Request executed successfully", function() {
   client.assert(response.status === 200, "Response status is not 200");
+  client.assert(response.body.json.success === true, "action failed");
 });
 %}
 
@@ -36,6 +37,7 @@ username={{username}}&password={{password}}
 > {%
 client.test("Request executed successfully", function() {
   client.assert(response.status === 200, "Response status is not 200");
+  client.assert(response.body.json.success === true, "action failed");
 });
 %}
 
