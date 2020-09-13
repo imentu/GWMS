@@ -22,7 +22,7 @@ def students():
         'employment': student.employment,
         'type': student.type
     } for student in students_data]
-    return jsonify({'success': True, 'data': data})
+    return jsonify({'data': data})
 
 
 # @bp.route('/psot', methods=['POST'])

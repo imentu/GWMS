@@ -36,6 +36,7 @@ def load_user(id):
 class Post(db.Model):
     __tablename__ = 'Posts'
     id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(200), server_default='')
     content = db.Column(db.Text, server_default='')
     author_id = db.Column(db.Integer, db.ForeignKey('Users.id'), nullable=False)
     create_time = db.Column(db.DateTime, nullable=False, server_default=func.now())

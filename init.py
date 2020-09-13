@@ -31,8 +31,9 @@ def add_test_data():
         db.session.add(manager)
         db.session.commit()
 
-        post = Post(content='test', author_id=manager.id)
-        db.session.add(post)
+        post = [Post(title=f'测试案例{i}', content='test', author_id=manager.id) for i in range(5)]
+
+        db.session.add_all(post)
         db.session.commit()
 
     print('add test data succeed.')

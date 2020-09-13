@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
-from config import Config
+from config import Config, DevConfig
 
 '''
     毕业生工作管理系统 GWMS (Graduate Work Management System)
@@ -12,12 +12,15 @@ db = SQLAlchemy()
 login_manager = LoginManager()
 
 
-def create_app(config_class=Config):
+def create_app(config_class=DevConfig):
     app = Flask(__name__)
     app.config.from_object(config_class)
 
     db.init_app(app)
     login_manager.init_app(app)
+
+    from app.main import bp as main_bp
+    app.register_blueprint(main_bp)
 
     from app.student import bp as student_bp
     app.register_blueprint(student_bp, url_prefix='/student')
