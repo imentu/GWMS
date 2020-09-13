@@ -9,40 +9,42 @@
 <div id="app">
     <el-container>
         <el-header>
-            <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect">
-                <el-menu-item index="1">处理中心</el-menu-item>
-                <el-submenu index="2">
-                    <template slot="title">我的工作台</template>
-                    <el-menu-item index="2-1">选项1</el-menu-item>
-                    <el-menu-item index="2-2">选项2</el-menu-item>
-                    <el-menu-item index="2-3">选项3</el-menu-item>
-                    <el-submenu index="2-4">
-                        <template slot="title">选项4</template>
-                        <el-menu-item index="2-4-1">选项1</el-menu-item>
-                        <el-menu-item index="2-4-2">选项2</el-menu-item>
-                        <el-menu-item index="2-4-3">选项3</el-menu-item>
-                    </el-submenu>
-                </el-submenu>
-                <el-menu-item index="3" disabled>消息中心</el-menu-item>
-                <el-menu-item index="4"><a href="https://www.ele.me" target="_blank">订单管理</a></el-menu-item>
-            </el-menu>
+            <a href="/">首页</a>
+            <el-button type="text" @click="dialogLoginFormVisible = true">登录</el-button>
+            <el-dialog title="登录" :visible.sync="dialogLoginFormVisible">
+                <el-form :model="loginForm" status-icon label-width="100px"
+                         class="demo-ruleForm">
+                    <el-form-item label="用户名" prop="username">
+                        <el-input type="text" v-model="loginForm.username" autocomplete="off"></el-input>
+                    </el-form-item>
+                    <el-form-item label="密码" prop="password">
+                        <el-input type="password" v-model="loginForm.password" autocomplete="off"></el-input>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button type="primary" @click="submitForm('loginForm')">提交</el-button>
+                        <el-button @click="resetForm('loginForm')">重置</el-button>
+                    </el-form-item>
+                </el-form>
+            </el-dialog>
         </el-header>
-        <el-main>
-            <div class="posts">
-                <el-timeline>
-                    <el-timeline-item :timestamp="post.time" placement="top" v-for="post in posts"
-                                      :key="post.id">
-                        <el-card>
-                            <h4>${ post.title }$</h4>
-                            <p>${ post.content }$</p>
-                        </el-card>
-                    </el-timeline-item>
-                </el-timeline>
-            </div>
-        </el-main>
+        <transition name="el-zoom-in-top">
+            <el-main>
+                <div class="posts">
+                    <el-timeline>
+                        <el-timeline-item :timestamp="post.time" placement="top" v-for="post in posts"
+                                          :key="post.id">
+                            <el-card>
+                                <h4>${ post.title }$</h4>
+                                <p>${ post.content }$</p>
+                            </el-card>
+                        </el-timeline-item>
+                    </el-timeline>
+                </div>
+            </el-main>
+        </transition>
         <el-footer>Footer</el-footer>
     </el-container>
-
+    <el-backtop target="#app"></el-backtop>
 </div>
 </body>
 <script src="static/js/common.js"></script>
@@ -54,19 +56,39 @@
     new Vue({
         delimiters: ['${', '}$'],
         el: '#app',
-        data: {
-            posts: []
+        data: function () {
+            return {
+                posts: [],
+                dialogLoginFormVisible: false,
+                loginForm: {
+                    username: '',
+                    password: ''
+                },
+            }
         },
         created: function () {
             fetch('/posts')
                 .then((resp) => resp.json())
                 .then((json) => {
-                    this.posts = json.data;
-                    for (let post of this.posts) {
+                    for (let post of json.data) {
                         post.time = new Date(post.update_time).format("yy-M-d H:m:s");
                     }
-                    console.log(this.posts);
+                    this.posts = json.data;
                 });
+        }, methods: {
+            submitForm(formName) {
+                this.$refs[formName].validate((valid) => {
+                    if (valid) {
+                        alert('submit!');
+                    } else {
+                        alert('error submit!!');
+                        return false;
+                    }
+                });
+            },
+            resetForm(formName) {
+                this.$refs[formName].resetFields();
+            }
         }
     })
 </script>
