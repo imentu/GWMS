@@ -12,8 +12,7 @@
             <a href="/">首页</a>
             <el-button type="text" @click="dialogLoginFormVisible = true">登录</el-button>
             <el-dialog title="登录" :visible.sync="dialogLoginFormVisible">
-                <el-form :model="loginForm" status-icon label-width="100px"
-                         class="demo-ruleForm">
+                <el-form :model="loginForm" :rules="loginFormRules" ref="loginForm" status-icon label-width="100px">
                     <el-form-item label="用户名" prop="username">
                         <el-input type="text" v-model="loginForm.username" autocomplete="off"></el-input>
                     </el-form-item>
@@ -64,6 +63,14 @@
                     username: '',
                     password: ''
                 },
+                loginFormRules: {
+                    username: [
+                        {required: true, message: '请输入用户名', trigger: 'blur'}
+                    ],
+                    password: [
+                        {required: true, message: '请输入密码', trigger: 'blur'}
+                    ]
+                }
             }
         },
         created: function () {
@@ -79,9 +86,26 @@
             submitForm(formName) {
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
-                        alert('submit!');
+                        let {username, password} = this.loginForm;
+                        let form = new FormData();
+                        form.append('username', username);
+                        form.append('password', password);
+                        fetch('/auth/login', {
+                            method: 'POST',
+                            body: form
+                        })
+                            .then((resp) => resp.json())
+                            .then((result) => {
+                                if (result.success) {
+                                    this.$message({message: result.message, type: 'success'});
+                                    this.resetForm('loginForm');
+                                    this.dialogLoginFormVisible = false;
+                                } else {
+                                    this.$message({message: result.message, type: 'error'});
+                                }
+                            })
+                        return true;
                     } else {
-                        alert('error submit!!');
                         return false;
                     }
                 });
