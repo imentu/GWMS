@@ -1,0 +1,62 @@
+### Login success
+POST http://127.0.0.1:5000/auth/login
+Content-Type: application/x-www-form-urlencoded
+
+username=fuck&password=123456
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+%}
+
+<> 2020-09-13T103703.200.json
+
+###
+GET http://127.0.0.1:5000/student/status
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+%}
+
+<> 2020-09-13T103704.200.json
+
+###
+GET http://127.0.0.1:5000/auth/logout
+
+<> 2020-09-13T103704-1.200.json
+<> 2020-09-12T041020.200.html
+
+### Send POST request with json body
+POST http://127.0.0.1:5000/student/status
+Content-Type: application/json
+
+{
+  "college": "计算机与信息工程学院",
+  "employment": "中国联通",
+  "gender": 1,
+  "major": "物联网工程",
+  "name": "张三",
+  "status": 1
+}
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+%}
+
+<> 2020-09-13T103704-2.200.json
+
+###
+GET http://127.0.0.1:5000/manager/students
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 401, "Response status is not 401");
+});
+%}
+
+<> 2020-09-13T103704.401.html

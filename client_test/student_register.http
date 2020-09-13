@@ -1,0 +1,43 @@
+###
+GET http://127.0.0.1:5000/student/
+
+> {% client.global.set("username", 'akhsfbkaf');
+    client.global.set("password", 'askjhfbakjf');
+%}
+
+
+<> 2020-09-13T105056.200.html
+<> 2020-09-13T105026.200.html
+<> 2020-09-13T105004.200.html
+<> 2020-09-13T104947.200.html
+<> 2020-09-13T104808.200.html
+
+### register success
+POST http://127.0.0.1:5000/auth/register
+Content-Type: application/x-www-form-urlencoded
+
+username={{username}}&password={{password}}
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+%}
+
+<> 2020-09-13T105056.200.json
+<> 2020-09-13T104808.200.json
+
+### login success
+POST http://127.0.0.1:5000/auth/login
+Content-Type: application/x-www-form-urlencoded
+
+username={{username}}&password={{password}}
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+%}
+
+<> 2020-09-13T105056-1.200.json
+<> 2020-09-13T104808-1.200.json
