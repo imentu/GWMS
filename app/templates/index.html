@@ -25,6 +25,43 @@
                     </el-form-item>
                 </el-form>
             </el-dialog>
+            <el-button type="text" @click="dialogRegisterFormVisible = true">注册</el-button>
+            <el-dialog title="注册" :visible.sync="dialogRegisterFormVisible">
+                <el-form :model="registerForm" :rules="registerFormRules" ref="registerForm" status-icon
+                         label-width="100px">
+                    <el-form-item label="用户名" prop="username">
+                        <el-input type="text" v-model="registerForm.username" autocomplete="off"></el-input>
+                    </el-form-item>
+                    <el-form-item label="密码" prop="password">
+                        <el-input type="password" v-model="registerForm.password" autocomplete="off"></el-input>
+                    </el-form-item>
+                    <el-form-item label="确认密码" prop="checkPassword">
+                        <el-input type="password" v-model="registerForm.checkPassword" autocomplete="off"></el-input>
+                    </el-form-item>
+                    <el-form-item label="姓名" prop="name">
+                        <el-input type="text" v-model="registerForm.name" autocomplete="off"></el-input>
+                    </el-form-item>
+                    <el-form-item label="性别">
+                        <el-radio-group v-model="registerForm.gender">
+                            <el-radio label="男"></el-radio>
+                            <el-radio label="女"></el-radio>
+                        </el-radio-group>
+                    </el-form-item>
+                    <el-form-item label="学院" prop="college">
+                        <el-input type="text" v-model="registerForm.college" autocomplete="off"></el-input>
+                    </el-form-item>
+                    <el-form-item label="专业" prop="major">
+                        <el-input type="text" v-model="registerForm.major" autocomplete="off"></el-input>
+                    </el-form-item>
+                    <el-form-item label="就业状态" prop="status">
+                        <el-input type="textarea" :rows="2" v-model="registerForm.status" autocomplete="off"></el-input>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button type="primary" @click="submitForm('registerForm')">提交</el-button>
+                        <el-button @click="resetForm('registerForm')">重置</el-button>
+                    </el-form-item>
+                </el-form>
+            </el-dialog>
         </el-header>
         <transition name="el-zoom-in-top">
             <el-main>
@@ -56,12 +93,41 @@
         delimiters: ['${', '}$'],
         el: '#app',
         data: function () {
+            let checkRegisterFormPassword = (rule, value, callback) => {
+                if (value !== this.registerForm.password) {
+                    callback(new Error('两次输入密码不一致!'));
+                } else {
+                    callback();
+                }
+            };
+            let validateUserName = (rule, value, callback) => {
+                fetch('/users/' + value + '/exists')
+                    .then((resp) => resp.json())
+                    .then((json) => {
+                        if (json.exists) {
+                            callback(new Error('用户名已存在!'));
+                        } else {
+                            callback();
+                        }
+                    });
+            };
             return {
                 posts: [],
                 dialogLoginFormVisible: false,
+                dialogRegisterFormVisible: false,
                 loginForm: {
                     username: '',
                     password: ''
+                },
+                registerForm: {
+                    username: '',
+                    password: '',
+                    checkPassword: '',
+                    name: '',
+                    gender: '男',
+                    college: '',
+                    major: '',
+                    status: '待业'
                 },
                 loginFormRules: {
                     username: [
@@ -70,6 +136,32 @@
                     password: [
                         {required: true, message: '请输入密码', trigger: 'blur'}
                     ]
+                },
+                registerFormRules: {
+                    username: [
+                        {required: true, message: '请输入用户名', trigger: 'blur'},
+                        {validator: validateUserName, trigger: 'blur'}
+                    ],
+                    password: [
+                        {required: true, message: '请输入密码', trigger: 'blur'},
+                        {validator: checkRegisterFormPassword, trigger: 'blur'}
+                    ],
+                    checkPassword: '',
+                    name: [
+                        {required: true, message: '请再次输入密码', trigger: 'blur'}
+                    ],
+                    gender: [
+                        {required: true, message: '请选择性别', trigger: 'blur'}
+                    ],
+                    college: [
+                        {required: true, message: '请输入学院名称', trigger: 'blur'}
+                    ],
+                    major: [
+                        {required: true, message: '请输入专业名称', trigger: 'blur'}
+                    ],
+                    status: [
+                        {required: true, message: '请输入就业状态', trigger: 'blur'}
+                    ],
                 }
             }
         },
@@ -84,8 +176,8 @@
                 });
         }, methods: {
             submitForm(formName) {
-                this.$refs[formName].validate((valid) => {
-                    if (valid) {
+                let action = {
+                    loginForm: () => {
                         let {username, password} = this.loginForm;
                         let form = new FormData();
                         form.append('username', username);
@@ -103,7 +195,36 @@
                                 } else {
                                     this.$message({message: result.message, type: 'error'});
                                 }
-                            })
+                            });
+                    },
+                    registerForm: () => {
+                        let {username, password, name, gender, college, major, status} = this.registerForm;
+                        let form = new FormData();
+                        form.append('username', username);
+                        form.append('password', password);
+                        form.append('name', name);
+                        form.append('gender', gender === '男' ? 1 : 0);
+                        form.append('college', college);
+                        form.append('major', major);
+                        form.append('status', status);
+                        fetch('/auth/register', {
+                            method: 'POST',
+                            body: form
+                        })
+                            .then((resp) => resp.json())
+                            .then((result) => {
+                                if (result.success) {
+                                    this.$message({message: result.message, type: 'success'});
+                                    this.dialogRegisterFormVisible = false;
+                                } else {
+                                    this.$message({message: result.message, type: 'error'});
+                                }
+                            });
+                    }
+                }
+                this.$refs[formName].validate((valid) => {
+                    if (valid) {
+                        action[formName]();
                         return true;
                     } else {
                         return false;

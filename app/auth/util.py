@@ -22,7 +22,7 @@ def login_verify(username, password):
     return {'info': {'success': result, 'message': message}, 'user': user}
 
 
-def register_verify(username, password):
+def register_verify(username, password, name='', gender=0, college='', major='', status=''):
     result, message = validate_username_password(username, password, True, '注册成功')
     user = None
     if result:
@@ -31,5 +31,6 @@ def register_verify(username, password):
             result, message = False, '该用户名已存在'
             user = None
         else:
-            user = User(username=username, password=password)
+            user = User(username=username, password=password, name=name, gender=gender, college=college, major=major,
+                        status=status)
     return {'info': {'success': result, 'message': message}, 'user': user}

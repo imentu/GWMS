@@ -11,7 +11,12 @@ def login():
     password = request.form['password']
     verify_result = login_verify(username, password)
     if verify_result['user']:
-        login_user(verify_result['user'])
+        user = verify_result['user']
+        login_user(user)
+        verify_result['info'].update({
+            'username': user.username,
+            'type': user.type
+        })
     return jsonify(verify_result['info'])
 
 
@@ -25,7 +30,13 @@ def logout():
 def register():
     username = request.form['username']
     password = request.form['password']
-    verify_result = register_verify(username, password)
+    name = request.form['name']
+    gender = request.form['gender']
+    college = request.form['college']
+    major = request.form['major']
+    status = request.form['status']
+    verify_result = register_verify(username, password, name=name, gender=gender, college=college, major=major,
+                                    status=status)
     if verify_result['user']:
         db.session.add(verify_result['user'])
         db.session.commit()
