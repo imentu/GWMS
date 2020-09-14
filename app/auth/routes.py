@@ -26,6 +26,7 @@ def logout():
     return jsonify({'success': True, 'message': 'logout success'})
 
 
+# TODO: status and employment problem
 @bp.route('/register', methods=['POST'])
 def register():
     username = request.form['username']
@@ -34,9 +35,8 @@ def register():
     gender = request.form['gender']
     college = request.form['college']
     major = request.form['major']
-    status = request.form['status']
-    verify_result = register_verify(username, password, name=name, gender=gender, college=college, major=major,
-                                    status=status)
+    # status = request.form['status']
+    verify_result = register_verify(username, password, name=name, gender=gender, college=college, major=major)
     if verify_result['user']:
         db.session.add(verify_result['user'])
         db.session.commit()

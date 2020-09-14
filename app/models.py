@@ -17,12 +17,12 @@ class User(db.Model, UserMixin):
     status = db.Column(db.Integer, nullable=False, server_default=text('0'))
     employment = db.Column(db.String(200), server_default='')
     create_time = db.Column(db.DateTime, nullable=False, server_default=func.now())
-    update_time = db.Column(db.DateTime, nullable=False, server_default=func.now(), server_onupdate=func.now())
+    update_time = db.Column(db.DateTime, nullable=False, server_default=func.now(), onupdate=func.now())
 
     posts = db.relationship('Post', backref='author', lazy=True)
 
     def __repr__(self):
-        return '<User %r>' % self.username
+        return '%s' % self.username
 
     def check_password(self, password):
         return self.password == password
@@ -40,7 +40,7 @@ class Post(db.Model):
     content = db.Column(db.Text, server_default='')
     author_id = db.Column(db.Integer, db.ForeignKey('Users.id'), nullable=False)
     create_time = db.Column(db.DateTime, nullable=False, server_default=func.now())
-    update_time = db.Column(db.DateTime, nullable=False, server_default=func.now(), server_onupdate=func.now())
+    update_time = db.Column(db.DateTime, nullable=False, server_default=func.now(), onupdate=func.now())
 
     def __repr__(self):
-        return '<Post %r>' % self.id
+        return '%d' % self.id

@@ -24,7 +24,7 @@ def add_test_data():
     with app.app_context():
         student1 = User(username='fuck', password='123456')
         student2 = User(username='zz', password='123456', status=1)
-        manager = User(username='admin', password='admin', type=1)
+        manager = User(username='admin', password='admin', type=2)
 
         db.session.add(student1)
         db.session.add(student2)

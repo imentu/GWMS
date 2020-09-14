@@ -1,6 +1,8 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
+from flask_admin import Admin
+from flask_admin import AdminIndexView
 from config import Config, DevConfig
 
 '''
@@ -18,6 +20,12 @@ def create_app(config_class=DevConfig):
 
     db.init_app(app)
     login_manager.init_app(app)
+
+    from app.models import User, Post
+    from app.admin import UserView, PostView
+    admin = Admin(app, name='GWMS', template_mode='bootstrap3')
+    admin.add_view(UserView(User, db.session))
+    admin.add_view(PostView(Post, db.session))
 
     from app.main import bp as main_bp
     app.register_blueprint(main_bp)

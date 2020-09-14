@@ -8,6 +8,8 @@ class Config(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = True
     SQLALCHEMY_COMMIT_TEARDOWN = True
 
+    FLASK_ADMIN_SWATCH = 'cerulean'
+
 
 class DevConfig(Config):
     ENV = 'development'
