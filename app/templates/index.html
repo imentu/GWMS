@@ -2,15 +2,24 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <!-- import CSS -->
     <link rel="stylesheet" href="static/css/index.css">
+    <style>
+        .float-right {
+            float: right !important;
+        }
+    </style>
 </head>
 <body>
 <div id="app">
     <el-container>
         <el-header>
-            <a href="/">首页</a>
-            <el-button type="text" @click="dialogLoginFormVisible = true">登录</el-button>
+            <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect">
+                <el-menu-item index="0">招聘动态</el-menu-item>
+                <el-menu-item class="float-right">
+                    <el-link type="primary" @click="dialogLoginFormVisible = true">登录</el-link>
+                </el-menu-item>
+            </el-menu>
+
             <el-dialog title="登录" :visible.sync="dialogLoginFormVisible">
                 <el-form :model="loginForm" :rules="loginFormRules" ref="loginForm" status-icon label-width="100px">
                     <el-form-item label="用户名" prop="username">
@@ -20,12 +29,12 @@
                         <el-input type="password" v-model="loginForm.password" autocomplete="off"></el-input>
                     </el-form-item>
                     <el-form-item>
-                        <el-button type="primary" @click="submitForm('loginForm')">提交</el-button>
-                        <el-button @click="resetForm('loginForm')">重置</el-button>
+                        <el-button type="warning" @click="dialogRegisterFormVisible = true">注册</el-button>
+                        <el-button type="primary" @click="submitForm('loginForm')" class="float-right">登录</el-button>
                     </el-form-item>
                 </el-form>
             </el-dialog>
-            <el-button type="text" @click="dialogRegisterFormVisible = true">注册</el-button>
+
             <el-dialog title="注册" :visible.sync="dialogRegisterFormVisible">
                 <el-form :model="registerForm" :rules="registerFormRules" ref="registerForm" status-icon
                          label-width="100px">
@@ -43,18 +52,24 @@
                     </el-form-item>
                     <el-form-item label="性别">
                         <el-radio-group v-model="registerForm.gender">
-                            <el-radio label="男"></el-radio>
-                            <el-radio label="女"></el-radio>
+                            <el-radio label="0">男</el-radio>
+                            <el-radio label="1">女</el-radio>
                         </el-radio-group>
                     </el-form-item>
-                    <el-form-item label="学院" prop="college">
+                    <el-form-item label="学院名称" prop="college">
                         <el-input type="text" v-model="registerForm.college" autocomplete="off"></el-input>
                     </el-form-item>
-                    <el-form-item label="专业" prop="major">
+                    <el-form-item label="专业名称" prop="major">
                         <el-input type="text" v-model="registerForm.major" autocomplete="off"></el-input>
                     </el-form-item>
-                    <el-form-item label="就业状态" prop="status">
-                        <el-input type="textarea" :rows="2" v-model="registerForm.status" autocomplete="off"></el-input>
+                    <el-form-item label="就业状态">
+                        <el-radio-group v-model="registerForm.status">
+                            <el-radio label="0">待业</el-radio>
+                            <el-radio label="1">就业</el-radio>
+                        </el-radio-group>
+                    </el-form-item>
+                    <el-form-item label="就职单位名称" prop="employment" v-if="registerForm.status == 1">
+                        <el-input type="text" :rows="2" v-model="registerForm.employment" autocomplete="off"></el-input>
                     </el-form-item>
                     <el-form-item>
                         <el-button type="primary" @click="submitForm('registerForm')">提交</el-button>
@@ -63,24 +78,21 @@
                 </el-form>
             </el-dialog>
         </el-header>
-        <transition name="el-zoom-in-top">
-            <el-main>
-                <div class="posts">
-                    <el-timeline>
-                        <el-timeline-item :timestamp="post.time" placement="top" v-for="post in posts"
-                                          :key="post.id">
-                            <el-card>
-                                <h4>${ post.title }$</h4>
-                                <p>${ post.content }$</p>
-                            </el-card>
-                        </el-timeline-item>
-                    </el-timeline>
-                </div>
-            </el-main>
-        </transition>
+        <el-main>
+            <transition name="el-zoom-in-top">
+                <el-timeline v-show="activeIndex == '0'">
+                    <el-timeline-item :timestamp="post.time" placement="top" v-for="post in posts"
+                                      :key="post.id">
+                        <el-card>
+                            <h4>${ post.title }$</h4>
+                            <p>${ post.content }$</p>
+                        </el-card>
+                    </el-timeline-item>
+                </el-timeline>
+            </transition>
+        </el-main>
         <el-footer>Footer</el-footer>
     </el-container>
-    <el-backtop target="#app"></el-backtop>
 </div>
 </body>
 <script src="static/js/common.js"></script>
@@ -89,13 +101,13 @@
 <!-- import JavaScript -->
 <script src="static/js/index.js"></script>
 <script>
-    new Vue({
+    let app = new Vue({
         delimiters: ['${', '}$'],
         el: '#app',
         data: function () {
-            let checkRegisterFormPassword = (rule, value, callback) => {
+            let validateCheckPassword = (rule, value, callback) => {
                 if (value !== this.registerForm.password) {
-                    callback(new Error('两次输入密码不一致!'));
+                    callback(new Error('两次输入密码不一致'));
                 } else {
                     callback();
                 }
@@ -105,13 +117,21 @@
                     .then((resp) => resp.json())
                     .then((json) => {
                         if (json.exists) {
-                            callback(new Error('用户名已存在!'));
+                            callback(new Error('用户名已存在'));
                         } else {
                             callback();
                         }
                     });
             };
+            let validateEmployment = (rule, value, callback) => {
+                if (this.registerForm.status !== 0 && value === '') {
+                    callback(new Error('请输入就职单位名称'));
+                } else {
+                    callback();
+                }
+            };
             return {
+                activeIndex: '0',
                 posts: [],
                 dialogLoginFormVisible: false,
                 dialogRegisterFormVisible: false,
@@ -124,10 +144,11 @@
                     password: '',
                     checkPassword: '',
                     name: '',
-                    gender: '男',
+                    gender: '0',
                     college: '',
                     major: '',
-                    status: '待业'
+                    status: '0',
+                    employment: ''
                 },
                 loginFormRules: {
                     username: [
@@ -144,7 +165,7 @@
                     ],
                     password: [
                         {required: true, message: '请输入密码', trigger: 'blur'},
-                        {validator: checkRegisterFormPassword, trigger: 'blur'}
+                        {validator: validateCheckPassword, trigger: 'blur'}
                     ],
                     checkPassword: '',
                     name: [
@@ -162,6 +183,9 @@
                     status: [
                         {required: true, message: '请输入就业状态', trigger: 'blur'}
                     ],
+                    employment: [
+                        {validator: validateEmployment, trigger: 'blur'}
+                    ]
                 }
             }
         },
@@ -175,7 +199,9 @@
                     this.posts = json.data;
                 });
         }, methods: {
-            submitForm(formName) {
+            handleSelect(key, keyPath) {
+                this.activeIndex = key ? key : '0';
+            }, submitForm(formName) {
                 let action = {
                     loginForm: () => {
                         let {username, password} = this.loginForm;
@@ -198,15 +224,16 @@
                             });
                     },
                     registerForm: () => {
-                        let {username, password, name, gender, college, major, status} = this.registerForm;
+                        let {username, password, name, gender, college, major, status, employment} = this.registerForm;
                         let form = new FormData();
                         form.append('username', username);
                         form.append('password', password);
                         form.append('name', name);
-                        form.append('gender', gender === '男' ? 1 : 0);
+                        form.append('gender', gender);
                         form.append('college', college);
                         form.append('major', major);
                         form.append('status', status);
+                        form.append('employment', employment);
                         fetch('/auth/register', {
                             method: 'POST',
                             body: form
@@ -233,6 +260,16 @@
             },
             resetForm(formName) {
                 this.$refs[formName].resetFields();
+            }, logout() {
+                fetch('/auth/logout').then((resp) => {
+                    if (resp.status == 200) {
+                        this.$message({message: '登出admi账号成功', type: 'success'});
+                    } else {
+                        this.$message({message: '登出账号失败', type: 'error'});
+                    }
+                });
+            }, admin() {
+                window.open('/admin');
             }
         }
     })

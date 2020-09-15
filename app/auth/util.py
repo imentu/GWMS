@@ -1,5 +1,4 @@
 from app.models import User
-from app import db
 
 
 def validate_username_password(username, password, default_result, default_message):
@@ -22,7 +21,7 @@ def login_verify(username, password):
     return {'info': {'success': result, 'message': message}, 'user': user}
 
 
-def register_verify(username, password, name='', gender=0, college='', major='', status=''):
+def register_verify(username, password, name='', gender=0, college='', major='', status='', employment=''):
     result, message = validate_username_password(username, password, True, '注册成功')
     user = None
     if result:
@@ -32,5 +31,5 @@ def register_verify(username, password, name='', gender=0, college='', major='',
             user = None
         else:
             user = User(username=username, password=password, name=name, gender=gender, college=college, major=major,
-                        status=status)
+                        status=status, employment=employment)
     return {'info': {'success': result, 'message': message}, 'user': user}

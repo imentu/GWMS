@@ -1,5 +1,5 @@
 from app.auth import bp
-from flask_login import login_user, logout_user
+from flask_login import login_user, logout_user, login_required
 from app import db
 from flask import request, jsonify
 from app.auth.util import login_verify, register_verify
@@ -21,12 +21,12 @@ def login():
 
 
 @bp.route('/logout')
+@login_required
 def logout():
     logout_user()
     return jsonify({'success': True, 'message': 'logout success'})
 
 
-# TODO: status and employment problem
 @bp.route('/register', methods=['POST'])
 def register():
     username = request.form['username']
@@ -35,8 +35,10 @@ def register():
     gender = request.form['gender']
     college = request.form['college']
     major = request.form['major']
-    # status = request.form['status']
-    verify_result = register_verify(username, password, name=name, gender=gender, college=college, major=major)
+    status = request.form['status']
+    employment = request.form['employment']
+    verify_result = register_verify(username, password, name=name, gender=gender, college=college, major=major,
+                                    status=status, employment=employment)
     if verify_result['user']:
         db.session.add(verify_result['user'])
         db.session.commit()
