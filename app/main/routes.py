@@ -1,6 +1,7 @@
 from app.main import bp
 from app.models import Post, User
-from flask import jsonify, request, render_template
+from flask import jsonify, render_template
+from flask_login import current_user, login_required
 
 
 @bp.route('/')
@@ -19,6 +20,17 @@ def posts():
         'update_time': post.update_time
     } for post in posts_data]
     return jsonify({'data': data})
+
+
+@bp.route('/user')
+@login_required
+def user_info():
+    return jsonify({
+        'id': current_user.id,
+        'username': current_user.username,
+        'name': current_user.name,
+        'type': current_user.type,
+    })
 
 
 @bp.route('/users/<username>/exists')
