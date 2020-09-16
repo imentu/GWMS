@@ -2,10 +2,17 @@
 <html>
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="static/css/normalize.css">
     <link rel="stylesheet" href="static/css/index.css">
     <style>
         .float-right {
             float: right !important;
+        }
+
+        .footer {
+            background-color: #f7fbfd;
+            width: 100%;
+            padding: 40px 150px;
         }
     </style>
 </head>
@@ -14,28 +21,31 @@
     <el-container>
         <el-header>
             <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect">
-                <el-menu-item index="0">招聘动态</el-menu-item>
-                <el-menu-item class="float-right" v-if="!user">
-                    <el-link type="primary" @click="dialogLoginFormVisible = true">登录</el-link>
-                </el-menu-item>
-                <el-submenu index="1" class="float-right" v-else>
+                <el-menu-item index="0" :key="0">招聘动态</el-menu-item>
+                <el-submenu class="float-right" :key="1" index="1" v-if="user">
                     <template slot="title">${ user.username }$</template>
                     <el-menu-item index="1-1" v-if="user.type == 0">
-                        修改个人资料
-                    </el-menu-item>
-                    <el-menu-item index="1-2" v-if="user.type >= 1">
-                        发布招聘动态
-                    </el-menu-item>
-                    <el-menu-item index="1-3" v-if="user.type >= 1">
-                        查看学生状态
+                        个人资料
                     </el-menu-item>
                     <el-menu-item v-if="user.type >= 2">
-                        <el-link type="info" href="/admin" target="_blank">进入管理后台</el-link>
+                        <el-link type="info" href="/admin" target="_blank">后台管理</el-link>
                     </el-menu-item>
                     <el-menu-item>
                         <el-link type="danger" @click="logout">注销</el-link>
                     </el-menu-item>
                 </el-submenu>
+                <el-menu-item :key="2" index="2" v-if="user && user.type >= 1">
+                    发布招聘
+                </el-menu-item>
+                <el-menu-item :key="3" index="3" v-if="user && user.type >= 1">
+                    学生状态
+                </el-menu-item>
+                <el-menu-item :key="4" class="float-right" v-if="!user">
+                    <el-link type="primary" @click="dialogLoginFormVisible = true">登录</el-link>
+                </el-menu-item>
+                <el-menu-item :key="5" class="float-right" v-if="!user">
+                    <el-link type="primary" @click="dialogRegisterFormVisible = true">注册</el-link>
+                </el-menu-item>
             </el-menu>
 
             <el-dialog title="登录" :visible.sync="dialogLoginFormVisible">
@@ -47,8 +57,8 @@
                         <el-input type="password" v-model="loginForm.password" autocomplete="off"></el-input>
                     </el-form-item>
                     <el-form-item>
-                        <el-button type="warning" @click="dialogRegisterFormVisible = true">注册</el-button>
-                        <el-button type="primary" @click="submitForm('loginForm')" class="float-right">登录</el-button>
+                        <el-button type="primary" @click="submitForm('loginForm')">登录</el-button>
+                        <el-button @click="resetForm('loginForm')">重置</el-button>
                     </el-form-item>
                 </el-form>
             </el-dialog>
@@ -86,7 +96,7 @@
                             <el-radio label="1">就业</el-radio>
                         </el-radio-group>
                     </el-form-item>
-                    <el-form-item label="就职单位名称" prop="employment" v-if="registerForm.status == 1">
+                    <el-form-item label="就业单位名称" prop="employment" v-if="registerForm.status == 1">
                         <el-input type="text" :rows="2" v-model="registerForm.employment" autocomplete="off"></el-input>
                     </el-form-item>
                     <el-form-item>
@@ -108,9 +118,52 @@
                     </el-timeline-item>
                 </el-timeline>
             </transition>
+            <transition name="el-zoom-in-top">
+                <div>
+                    <el-button-group class="float-right">
+                        <el-link href="/manager/export" target="_blank">导出</el-link>
+                    </el-button-group>
+                    <el-table
+                            :data="students"
+                            stripe
+                            style="width: 100%" v-show="activeIndex === '3'">
+                        <el-table-column prop="id" label="编号"></el-table-column>
+                        <el-table-column prop="name" label="姓名"></el-table-column>
+                        <el-table-column prop="gender" label="性别"></el-table-column>
+                        <el-table-column prop="college" label="学院"></el-table-column>
+                        <el-table-column prop="major" label="专业"></el-table-column>
+                        <el-table-column prop="status" label="就业状态"></el-table-column>
+                        <el-table-column prop="employment" label="就业单位"></el-table-column>
+                    </el-table>
+                </div>
+            </transition>
         </el-main>
-        <!-- TODO: footer view -->
-        <el-footer>Footer</el-footer>
+        <el-footer class="footer" height="240px">
+            <el-row type="flex" class="row-bg" justify="space-around">
+                <el-col :span="6">
+                    <ul>
+                        <li><a href="#">index</a></li>
+                        <li><a href="#">admin</a></li>
+                        <li><a href="#">register</a></li>
+                    </ul>
+                </el-col>
+                <el-col :span="6">
+                    <ul>
+                        <li><a href="#">index</a></li>
+                        <li><a href="#">admin</a></li>
+                        <li><a href="#">register</a></li>
+                    </ul>
+                </el-col>
+                <el-col :span="6">
+                    <ul>
+                        <li><a href="#">index</a></li>
+                        <li><a href="#">admin</a></li>
+                        <li><a href="#">register</a></li>
+                    </ul>
+                </el-col>
+            </el-row>
+
+        </el-footer>
     </el-container>
 </div>
 </body>
@@ -144,7 +197,7 @@
             };
             let validateEmployment = (rule, value, callback) => {
                 if (this.registerForm.status !== 0 && value === '') {
-                    callback(new Error('请输入就职单位名称'));
+                    callback(new Error('请输入就业单位名称'));
                 } else {
                     callback();
                 }
@@ -152,6 +205,7 @@
             return {
                 activeIndex: '0',
                 posts: [],
+                students: [],
                 user: null,
                 dialogLoginFormVisible: false,
                 dialogRegisterFormVisible: false,
@@ -221,7 +275,9 @@
                 });
         }, methods: {
             handleSelect(key, keyPath) {
+                console.log(key, keyPath);
                 this.activeIndex = key ? key : '0';
+                console.log(this.activeIndex);
             }, submitForm(formName) {
                 let action = {
                     loginForm: () => {
@@ -296,8 +352,15 @@
             }, userInfo() {
                 fetch('/user')
                     .then((resp) => resp.json())
-                    .then((json) => {
-                        this.user = json;
+                    .then((result) => {
+                        this.user = result;
+                        if (this.user.type >= 1) {
+                            fetch('/manager/students')
+                                .then((resp) => resp.json())
+                                .then((result) => {
+                                    this.students = result.data;
+                                });
+                        }
                     })
                     .catch((error) => {
                         this.user = null;

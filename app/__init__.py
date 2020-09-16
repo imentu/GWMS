@@ -2,7 +2,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_admin import Admin
-from flask_admin import AdminIndexView
+import flask_excel as excel
 from config import Config, DevConfig
 
 '''
@@ -20,6 +20,7 @@ def create_app(config_class=DevConfig):
 
     db.init_app(app)
     login_manager.init_app(app)
+    excel.init_excel(app)
 
     from app.models import User, Post
     from app.admin import UserView, PostView
