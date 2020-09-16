@@ -50,7 +50,7 @@ def add_test_data():
         student = User(username='zz', password='123456', status=0)
         manager = User(username='admin', password='admin', type=2)
 
-        db.session.add_all([rand_user() for i in range(500)])
+        db.session.add_all([rand_user() for i in range(30)])
         db.session.add(student)
         db.session.add(manager)
         db.session.commit()

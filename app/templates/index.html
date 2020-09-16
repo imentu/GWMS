@@ -119,7 +119,7 @@
                 </el-timeline>
             </transition>
             <transition name="el-zoom-in-top">
-                <div>
+                <div v-show="activeIndex === '3'">
                     <el-button-group class="float-right">
                         <el-link href="/manager/export" target="_blank">导出</el-link>
                     </el-button-group>
@@ -292,7 +292,7 @@
                             .then((resp) => resp.json())
                             .then((result) => {
                                 if (result.success) {
-                                    this.user = result.user;
+                                    this.userInfo();
                                     this.$message({message: result.message, type: 'success'});
                                     this.resetForm('loginForm');
                                     this.dialogLoginFormVisible = false;
