@@ -1,9 +1,9 @@
 import os
-import time
 import random
-from common import basedir
+
 from app import create_app, db
 from app.models import User, Post
+from common import basedir
 
 app = create_app()
 

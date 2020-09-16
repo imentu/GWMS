@@ -1,8 +1,10 @@
-from flask import current_app
-from functools import wraps
-from flask_login import current_user
-from app.models import User
 from collections import OrderedDict
+from functools import wraps
+
+from flask import current_app
+from flask_login import current_user
+
+from app.models import User
 
 
 def permission_required(func, level=1):

@@ -1,7 +1,8 @@
-from app.main import bp
-from app.models import Post, User
 from flask import jsonify, render_template
 from flask_login import current_user, login_required
+
+from app.main import bp
+from app.models import Post, User
 
 
 @bp.route('/')

@@ -1,8 +1,9 @@
-from flask import jsonify
-from app.manager import bp
-from flask_login import login_required
-from app.manager.util import permission_required, students_records, students_records_for_export
 import flask_excel as excel
+from flask import jsonify
+from flask_login import login_required
+
+from app.manager import bp
+from app.manager.util import permission_required, students_records, students_records_for_export
 
 
 @bp.route('/students')

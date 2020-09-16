@@ -1,7 +1,8 @@
-from app import db, login_manager
 from flask_login import UserMixin
 from sqlalchemy import text
 from sqlalchemy.sql import func
+
+from app import db, login_manager
 
 
 class User(db.Model, UserMixin):

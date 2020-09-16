@@ -1,7 +1,8 @@
-from app.auth import bp
-from flask_login import login_user, logout_user, login_required
-from app import db
 from flask import request, jsonify
+from flask_login import login_user, logout_user, login_required
+
+from app import db
+from app.auth import bp
 from app.auth.util import login_verify, register_verify
 
 

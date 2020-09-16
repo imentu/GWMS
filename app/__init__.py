@@ -1,9 +1,10 @@
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager
-from flask_admin import Admin
 import flask_excel as excel
-from config import Config, DevConfig
+from flask import Flask
+from flask_admin import Admin
+from flask_login import LoginManager
+from flask_sqlalchemy import SQLAlchemy
+
+from config import DevConfig
 
 '''
     毕业生工作管理系统 GWMS (Graduate Work Management System)
