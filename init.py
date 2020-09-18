@@ -1,24 +1,10 @@
 import os
-import random
 
 from app import create_app, db
 from app.models import User, Post
 from common import basedir
 
 app = create_app()
-
-
-def create_db():
-    data_folder = os.path.join(basedir, 'data')
-    if not os.path.exists(data_folder):
-        print('data folder not exist, creating data folder.')
-        os.mkdir(data_folder)
-    db_path = os.path.join(data_folder, 'sys.db')
-    if os.path.exists(db_path):
-        print('sys.db already exist, deleting sys.db.')
-        os.remove(db_path)
-    db.create_all(app=app)
-    print('db created.')
 
 
 def rand_user():
@@ -45,6 +31,19 @@ def rand_user():
                 employment=random.choice(employments) if status is 1 else '')
 
 
+def create_db():
+    data_folder = os.path.join(basedir, 'data')
+    if not os.path.exists(data_folder):
+        print('data folder not exist, creating data folder.')
+        os.mkdir(data_folder)
+    db_path = os.path.join(data_folder, 'sys.db')
+    if os.path.exists(db_path):
+        print('sys.db already exist, deleting sys.db.')
+        os.remove(db_path)
+    db.create_all(app=app)
+    print('db created.')
+
+
 def add_test_data():
     with app.app_context():
         student = User(username='zz', password='123456', status=0)
@@ -55,12 +54,12 @@ def add_test_data():
         db.session.add(manager)
         db.session.commit()
 
-        post = [Post(title=f'测试案例{i}', content='test', author_id=manager.id) for i in range(5)]
+        post = [Post(title=f'测试案例{i}', content='tests', author_id=manager.id) for i in range(5)]
 
         db.session.add_all(post)
         db.session.commit()
 
-    print('add test data succeed.')
+    print('add tests data succeed.')
 
 
 if __name__ == '__main__':
