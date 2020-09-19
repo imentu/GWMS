@@ -8,8 +8,6 @@ from app import create_app
 app = create_app()
 
 
-# TODO: tests
-
 @pytest.fixture
 def client():
     with app.test_client() as client:
@@ -79,9 +77,18 @@ def test_login_logout(client):
 def test_register(client):
     username = ''.join(random.sample(string.ascii_letters + string.digits, 8))
     password = ''.join(random.sample(string.ascii_letters + string.digits, 8))
+
+    r = client.get(f'/users/{username}/exists')
+    j = r.get_json()
+    assert j['exists'] is False
+
     r = register(client, username, password)
     j = r.get_json()
     assert j['success'] is True
+
+    r = client.get(f'/users/{username}/exists')
+    j = r.get_json()
+    assert j['exists'] is True
 
     r = login(client, username, password)
     j = r.get_json()

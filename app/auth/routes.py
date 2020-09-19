@@ -46,3 +46,4 @@ def register():
         db.session.add(verify_result['user'])
         db.session.commit()
     return jsonify(verify_result['info'])
+

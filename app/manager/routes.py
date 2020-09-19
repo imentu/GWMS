@@ -6,6 +6,8 @@ from app.manager import bp
 from app.manager.util import permission_required, students_records, students_records_for_export
 
 
+# TODO: integration ckeditor
+
 @bp.route('/students')
 @login_required
 @permission_required
