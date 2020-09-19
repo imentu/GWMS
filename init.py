@@ -1,4 +1,6 @@
 import os
+import random
+import string
 
 from app import create_app, db
 from app.models import User, Post
@@ -16,13 +18,12 @@ def rand_user():
               '邵', '堪', '汪', '祁', '毛', '禹', '狄', '米', '贝', '明', '臧', '计', '伏', '成', '戴', '谈', '宋', '茅', '庞', '熊', '纪',
               '舒', '屈', '项', '祝', '董', '梁']
     name_m = ['玉', '明', '龙', '芳', '军', '玲', '', '立', '玲', '', '国', '一', '二', '三', '四', '五']
-    alpha = 'abcdefghijklmnopqrstuvwxyzQBCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'
     colleges = ['计算机与信息工程学院', '机电工程学院', '经济管理学院']
     majors = ['物联网工程', '会计学', '机械制造']
     employments = ['黑煤窑', '传销公司', '保险公司']
     status = random.choice([0, 1])
-    return User(username=''.join([random.choice(alpha) for i in range(8)]),
-                password=''.join([random.choice(alpha) for i in range(8)]),
+    return User(username=''.join(random.sample(string.ascii_letters + string.digits, 8)),
+                password=''.join(random.sample(string.ascii_letters + string.digits, 8)),
                 name=random.choice(name_x) + random.choice(name_x) + random.choice(name_m),
                 gender=random.choice([0, 1]),
                 college=random.choice(colleges),
