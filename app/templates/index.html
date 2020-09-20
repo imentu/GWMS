@@ -137,6 +137,14 @@
                     </el-table>
                 </div>
             </transition>
+            <transition name="el-zoom-in-top">
+                <div v-show="activeIndex === '2'">
+                    <form method="post">
+                        {{ ckeditor.create() }}
+                        <input type="submit">
+                    </form>
+                </div>
+            </transition>
         </el-main>
         <el-footer class="footer" height="240px">
             <el-row type="flex" class="row-bg" justify="space-around">
@@ -168,6 +176,7 @@
 </div>
 </body>
 <script src="static/js/common.js"></script>
+{{ ckeditor.load() }}
 <!-- import Vue before Element -->
 <script src="static/js/vue.js"></script>
 <!-- import JavaScript -->

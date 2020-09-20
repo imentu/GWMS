@@ -11,6 +11,8 @@ class Config(object):
 
     FLASK_ADMIN_SWATCH = 'cerulean'
 
+    CKEDITOR_PKG_TYPE = 'basic'
+
 
 class DevConfig(Config):
     ENV = 'development'

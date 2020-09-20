@@ -1,6 +1,7 @@
 import flask_excel as excel
 from flask import Flask
 from flask_admin import Admin
+from flask_ckeditor import CKEditor
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 
@@ -13,6 +14,7 @@ from config import DevConfig
 
 db = SQLAlchemy()
 login_manager = LoginManager()
+ckeditor = CKEditor()
 
 
 def create_app(config_class=DevConfig):
@@ -21,6 +23,7 @@ def create_app(config_class=DevConfig):
 
     db.init_app(app)
     login_manager.init_app(app)
+    ckeditor.init_app(app)
     excel.init_excel(app)
 
     from app.models import User, Post
