@@ -1,12 +1,14 @@
+import getopt
 import os
 import random
 import string
+import sys
 
 from app import create_app, db
 from app.models import User, Post
-from common import basedir
 
 app = create_app()
+basedir = os.path.abspath(os.path.dirname(__file__))
 
 
 def rand_user():
@@ -44,20 +46,23 @@ def create_db():
     db.create_all(app=app)
     print('db created.')
 
+    with app.app_context():
+        manager = User(username='admin', password='admin', type=2)
+        db.session.add(manager)
+        db.session.commit()
+
 
 def add_test_data():
     with app.app_context():
         student = User(username='zz', password='123456', status=0)
-        manager = User(username='admin', password='admin', type=2)
 
         db.session.add_all([rand_user() for i in range(30)])
         db.session.add(student)
-        db.session.add(manager)
         db.session.commit()
 
         post = [Post(title=f'python讲师-{i}',
                      content='<p><strong>职位描述：</strong></p><ul><li>【岗位职责】<ul><li>Python课程讲师，0基础课程，远程授课，受众为美国留学生</li><li>设计课程、课上授课、课后答疑</li><li>每节课2小时，每周4节课，每个课题2周</li><li>首次开课时间：10月20日左右</li></ul></li><li>【任职要求】<ul><li>可以使用英语为授课语言</li><li>美国US News综合排名Top 40学校 or CS专业排名TOP 15学校 or QS世界大学排名TOP 60学校 or&nbsp;国内外大厂正式员工（BAT、美团、字节、谷歌、亚马逊等）</li><li>CS相关专业，可以熟练使用Python，研究生或者博士生在读</li></ul></li><li>【薪资待遇】<ul><li>450-500人民币每小时，条件优秀者薪资可面议。每课题2周共计16小时</li><li>提供实习证明，优秀导师可获得企业推荐信，获得更多工作机会</li></ul></li></ul>',
-                     author_id=manager.id) for i in range(3)]
+                     author_id=0) for i in range(3)]
 
         db.session.add_all(post)
         db.session.commit()
@@ -67,4 +72,9 @@ def add_test_data():
 
 if __name__ == '__main__':
     create_db()
-    add_test_data()
+    try:
+        opts, args = getopt.getopt(sys.argv[1:], 'd')
+        if opts:
+            add_test_data()
+    except getopt.GetoptError:
+        pass
