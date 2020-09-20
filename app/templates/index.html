@@ -14,6 +14,15 @@
             width: 100%;
             padding: 40px 150px;
         }
+
+        .m-label {
+            display: block;
+            margin: 8px 0px;
+        }
+
+        #cke_ckeditor {
+            margin-bottom: 8px;
+        }
     </style>
 </head>
 <body>
@@ -113,7 +122,7 @@
                                       :key="post.id">
                         <el-card>
                             <h4>${ post.title }$</h4>
-                            <p>${ post.content }$</p>
+                            <p v-html="post.content"></p>
                         </el-card>
                     </el-timeline-item>
                 </el-timeline>
@@ -139,9 +148,13 @@
             </transition>
             <transition name="el-zoom-in-top">
                 <div v-show="activeIndex === '2'">
-                    <form method="post">
+                    <iframe name="unVisibleFrame" frameborder=0 width=0 height=0></iframe>
+                    <form action="/manager/post" target="unVisibleFrame" method="post">
+                        <label class="m-label">标题</label>
+                        <el-input type="text" name="title" v-model="postTitle"></el-input>
+                        <label class="m-label">内容</label>
                         {{ ckeditor.create() }}
-                        <input type="submit">
+                        <el-button type="primary" native-type="submit" @click="createPost">发布</el-button>
                     </form>
                 </div>
             </transition>
@@ -177,9 +190,7 @@
 </body>
 <script src="static/js/common.js"></script>
 {{ ckeditor.load() }}
-<!-- import Vue before Element -->
 <script src="static/js/vue.js"></script>
-<!-- import JavaScript -->
 <script src="static/js/index.js"></script>
 <script>
     let app = new Vue({
@@ -218,6 +229,7 @@
                 user: null,
                 dialogLoginFormVisible: false,
                 dialogRegisterFormVisible: false,
+                postTitle: '',
                 loginForm: {
                     username: '',
                     password: ''
@@ -274,15 +286,18 @@
         },
         created: function () {
             this.userInfo();
-            fetch('/posts')
-                .then((resp) => resp.json())
-                .then((json) => {
-                    for (let post of json.data) {
-                        post.time = new Date(post.update_time).format("yy-M-d H:m:s");
-                    }
-                    this.posts = json.data;
-                });
+            this.loadPosts();
         }, methods: {
+            loadPosts() {
+                fetch('/posts')
+                    .then((resp) => resp.json())
+                    .then((json) => {
+                        for (let post of json.data) {
+                            post.time = new Date(post.update_time).format("yy-M-d H:m:s");
+                        }
+                        this.posts = json.data;
+                    });
+            },
             handleSelect(key, keyPath) {
                 console.log(key, keyPath);
                 this.activeIndex = key ? key : '0';
@@ -374,6 +389,14 @@
                     .catch((error) => {
                         this.user = null;
                     });
+            }, createPost() {
+                if (this.postTitle == '') {
+                    this.$message({message: '文章标题不能为空', type: 'error'});
+                    return false;
+                } else {
+                    this.$message({message: '发布成功', type: 'success'});
+                    return true;
+                }
             }
         }
     })

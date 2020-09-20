@@ -12,6 +12,7 @@ class Config(object):
     FLASK_ADMIN_SWATCH = 'cerulean'
 
     CKEDITOR_PKG_TYPE = 'basic'
+    CKEDITOR_SERVE_LOCAL = True
 
 
 class DevConfig(Config):

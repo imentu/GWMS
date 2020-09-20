@@ -43,5 +43,7 @@ class Post(db.Model):
     create_time = db.Column(db.DateTime, nullable=False, server_default=func.now())
     update_time = db.Column(db.DateTime, nullable=False, server_default=func.now(), onupdate=func.now())
 
+    __mapper_args__ = {"order_by": create_time.desc()}
+
     def __repr__(self):
         return '%d' % self.id
