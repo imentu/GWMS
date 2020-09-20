@@ -9,8 +9,6 @@ from app.manager.util import permission_required, students_records, students_rec
 from app.models import Post
 
 
-# TODO: integration ckeditor
-
 @bp.route('/students')
 @login_required
 @permission_required
