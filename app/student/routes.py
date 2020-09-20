@@ -33,11 +33,9 @@ def status():
 def update_status():
     user = User.query.get(current_user.id)
     data = json.loads(request.get_data(as_text=True))
-    user.name = data['name']
-    user.major = data['major']
-    user.college = data['college']
-    user.gender = data['gender']
     user.status = data['status']
     user.employment = data['employment']
+    if user.status is 0:
+        user.employment = ''
     db.session.commit()
-    return jsonify({'success': True, 'message': 'update status success.'})
+    return jsonify({'success': True, 'message': '更改就业状态成功'})

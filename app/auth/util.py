@@ -11,7 +11,7 @@ def validate_username_password(username, password, default_result, default_messa
 
 
 def login_verify(username, password):
-    result, message = validate_username_password(username, password, True, '登陆成功')
+    result, message = validate_username_password(username, password, True, '登录成功')
     user = None
     if result:
         user = User.query.filter_by(username=username).first()

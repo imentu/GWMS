@@ -20,7 +20,7 @@ def login():
             'name': user.name,
             'type': user.type
         }
-        return jsonify(verify_result['info'])
+    return jsonify(verify_result['info'])
 
 
 @bp.route('/logout')
@@ -46,4 +46,3 @@ def register():
         db.session.add(verify_result['user'])
         db.session.commit()
     return jsonify(verify_result['info'])
-
