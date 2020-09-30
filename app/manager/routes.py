@@ -32,4 +32,4 @@ def create_post():
     post = Post(title=title, content=content, author_id=current_user.id)
     db.session.add(post)
     db.session.commit()
-    return ''
+    return jsonify({'success': True, 'message': 'create post success'})
