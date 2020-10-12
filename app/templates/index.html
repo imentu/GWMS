@@ -152,14 +152,25 @@
                     <el-table
                             :data="students"
                             stripe
+                            max-height="760"
                             style="width: 100%" v-show="activeIndex === '3'">
                         <el-table-column prop="id" label="编号"></el-table-column>
                         <el-table-column prop="name" label="姓名"></el-table-column>
-                        <el-table-column prop="gender" label="性别"></el-table-column>
-                        <el-table-column prop="college" label="学院"></el-table-column>
-                        <el-table-column prop="major" label="专业"></el-table-column>
-                        <el-table-column prop="status" label="就业状态"></el-table-column>
-                        <el-table-column prop="employment" label="就业单位"></el-table-column>
+                        <el-table-column prop="gender" label="性别"
+                                         :filters="[{ text: '男', value: '男' }, { text: '女', value: '女' }]"
+                                         :filter-method="filterHandler"></el-table-column>
+                        <el-table-column prop="college" label="学院"
+                                         :filters="collegeFilters"
+                                         :filter-method="filterHandler"></el-table-column>
+                        <el-table-column prop="major" label="专业"
+                                         :filters="majorFilters"
+                                         :filter-method="filterHandler"></el-table-column>
+                        <el-table-column prop="status" label="就业状态"
+                                         :filters="[{ text: '就业', value: '就业' }, { text: '待业', value: '待业' }]"
+                                         :filter-method="filterHandler"></el-table-column>
+                        <el-table-column prop="employment" label="就业单位"
+                                         :filters="employmentFilters"
+                                         :filter-method="filterHandler"></el-table-column>
                     </el-table>
                 </div>
             </transition>
@@ -230,6 +241,9 @@
                 activeIndex: '0',
                 posts: [],
                 students: [],
+                collegeFilters: [],
+                majorFilters: [],
+                employmentFilters: [],
                 user: null,
                 dialogLoginFormVisible: false,
                 dialogRegisterFormVisible: false,
@@ -407,6 +421,15 @@
             }, admin() {
                 window.open('/admin');
             }, userInfo() {
+                let dataSets = (arr, property) => {
+                    let s = new Set();
+                    arr.forEach((item, index, arr) => {
+                        s.add(item[property]);
+                    });
+                    return Array.from(s).map((item) => {
+                        return {'text': item, 'value': item}
+                    });
+                }
                 fetch('/user')
                     .then((resp) => resp.json())
                     .then((result) => {
@@ -416,13 +439,21 @@
                                 .then((resp) => resp.json())
                                 .then((result) => {
                                     this.students = result.data;
+                                    this.collegeFilters = dataSets(result.data, 'college');
+                                    this.majorFilters = dataSets(result.data, 'major');
+                                    this.employmentFilters = dataSets(result.data, 'employment');
                                 });
                         }
                     })
                     .catch((error) => {
                         this.user = null;
                     });
-            }, createPost() {
+            },
+            filterHandler(value, row, column) {
+                const property = column['property'];
+                return row[property] === value;
+            },
+            createPost() {
                 if (this.postTitle == '') {
                     this.$message({message: '文章标题不能为空', type: 'error'});
                     return false;
