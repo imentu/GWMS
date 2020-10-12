@@ -3,10 +3,10 @@ Software Engineering Homework
 
 ## 打包方式
  * > pip install -r requirement.txt
- * 找到 flask_admin 的包文件夹，复制到项目目录。
- * > pyinstaller runserver.py --add-data "./app/static/*;./app/static" --add-data "./app/templates/*;./app/templates"
+ * > pyinstaller runserver.py 
  * > pyinstaller create_db.py
- * 将 dist/create_db/create_db.exe 复制到 dist/runserver/目录下。
+ * 找到 app/flask_admin/flask_ckeditor 的 static/templates 文件夹，复制到 dist/runserver/{package_name} 目录。
+ * 将 dist/create_db/create_db.exe 复制到 dist/runserver/目录。
 
 ## 运行
  * > create_db.exe 
