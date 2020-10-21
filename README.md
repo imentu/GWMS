@@ -1,11 +1,10 @@
 # GWMS
-Software Engineering Homework
+IMAU软件工程概论大作业
 
 ## 打包方式
- * > pip install -r requirement.txt
- * > pyinstaller runserver.py 
+ * > pip install -r requirement.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
+ * > pyinstaller runserver.py -y --add-data ./resources/app;./app --add-data ./resources/flask_admin;./flask_admin --add-data ./resources/flask_ckeditor;./flask_ckeditor 
  * > pyinstaller create_db.py
- * 找到 app/flask_admin/flask_ckeditor 的 static/templates 文件夹，复制到 dist/runserver/{package_name} 目录。
  * 将 dist/create_db/create_db.exe 复制到 dist/runserver/目录。
 
 ## 运行
