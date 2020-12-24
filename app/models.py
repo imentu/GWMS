@@ -4,6 +4,10 @@ from sqlalchemy.sql import func
 
 from app import db, login_manager
 
+'''
+    向 ORM 提供 User 数据映射对象及 User 表结构
+'''
+
 
 class User(db.Model, UserMixin):
     __tablename__ = 'Users'
@@ -29,9 +33,19 @@ class User(db.Model, UserMixin):
         return self.password == password
 
 
+'''
+    提供给登录模块使用，通用用户 id 获取用户
+'''
+
+
 @login_manager.user_loader
 def load_user(id):
     return User.query.get(int(id))
+
+
+'''
+    向 ORM 提供 Post 数据映射对象及 Post 表结构
+'''
 
 
 class Post(db.Model):

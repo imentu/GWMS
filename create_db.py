@@ -10,6 +10,10 @@ from app.models import User, Post
 app = create_app()
 basedir = os.path.abspath(os.path.dirname(__file__))
 
+'''
+    随机生成用户数据
+'''
+
 
 def rand_user():
     name_x = ['赵', '钱', '孙', '李', '周', '吴', '郑', '王', '冯', '陈', '褚', '卫', '蒋', '沈', '韩', '杨', '朱', '秦', '尤', '许', '何',
@@ -34,6 +38,11 @@ def rand_user():
                 employment=random.choice(employments) if status is 1 else '')
 
 
+'''
+    创建数据库
+'''
+
+
 def create_db():
     data_folder = os.path.join(basedir, 'data')
     if not os.path.exists(data_folder):
@@ -52,6 +61,11 @@ def create_db():
         db.session.commit()
 
 
+'''
+     向数据库中添加测试数据
+'''
+
+
 def add_test_data():
     with app.app_context():
         student = User(username='zz', password='123456', status=0)
@@ -64,7 +78,7 @@ def add_test_data():
 
         post = [Post(title=f'python讲师-{i}',
                      content='<p><strong>职位描述：</strong></p><ul><li>【岗位职责】<ul><li>Python课程讲师，0基础课程，远程授课，受众为美国留学生</li><li>设计课程、课上授课、课后答疑</li><li>每节课2小时，每周4节课，每个课题2周</li><li>首次开课时间：10月20日左右</li></ul></li><li>【任职要求】<ul><li>可以使用英语为授课语言</li><li>美国US News综合排名Top 40学校 or CS专业排名TOP 15学校 or QS世界大学排名TOP 60学校 or&nbsp;国内外大厂正式员工（BAT、美团、字节、谷歌、亚马逊等）</li><li>CS相关专业，可以熟练使用Python，研究生或者博士生在读</li></ul></li><li>【薪资待遇】<ul><li>450-500人民币每小时，条件优秀者薪资可面议。每课题2周共计16小时</li><li>提供实习证明，优秀导师可获得企业推荐信，获得更多工作机会</li></ul></li></ul>',
-                     author_id=admin.id) for i in range(3)]
+                     author_id=admin.id) for i in range(3)]  # 生成三条招聘信息
 
         db.session.add_all(post)
         db.session.commit()
@@ -75,7 +89,7 @@ def add_test_data():
 if __name__ == '__main__':
     create_db()
     try:
-        opts, args = getopt.getopt(sys.argv[1:], 'd')
+        opts, args = getopt.getopt(sys.argv[1:], 'd')  # 如果命令行参数中有 -d 则生成测试数据
         if opts:
             add_test_data()
     except getopt.GetoptError:

@@ -6,6 +6,9 @@ import pytest
 from app import create_app
 
 app = create_app()
+'''
+    自动化测试各接口
+'''
 
 
 @pytest.fixture
@@ -106,6 +109,7 @@ def test_register(client):
 def test_student_access_permission_requirement(client):
     r = login(client, 'zz', '123456')
     j = r.get_json()
+    A
     assert j['success'] is True
 
     r = students(client)

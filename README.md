@@ -1,10 +1,13 @@
 # GWMS
 IMAU软件工程概论大作业
+后端框架使用 flask，数据库为 SQLite3。
+前端使用 vue + elementUI。
 
 ## 打包方式
- * > pip install -r requirement.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
- * > pyinstaller runserver.py -y --add-data ./resources/app;./app --add-data ./resources/flask_admin;./flask_admin --add-data ./resources/flask_ckeditor;./flask_ckeditor 
+ * > pip install -r requirement.txt -i https://pypi.tuna.tsinghua.edu.cn/simple some-package
+ * > pyinstaller runserver.py 
  * > pyinstaller create_db.py
+ * 找到 app/flask_admin/flask_ckeditor 的 static/templates 文件夹，复制到 dist/runserver/{package_name} 目录。
  * 将 dist/create_db/create_db.exe 复制到 dist/runserver/目录。
 
 ## 运行
